@@ -9,7 +9,6 @@
         <img src="/img/progress_input.svg"/>
       </div>
       <div class="page-title">お見積り情報入力</div>
-
       <div class="col-sm-12">
         <fieldset>
           <h2 class="sub-title">保険種別</h2>
@@ -32,10 +31,16 @@
           </label>
           <label>
             シメイ（フリガナ）
+            {{#each errors}}
+              {{#eq this.field "kanaName"}}<br /><dev class="warning">{{this.defaultMessage}}</dev>{{/eq}}
+            {{/each}}
             <input type="text" name="kanaName" value="{{userOrderForm.kanaName}}"/>
           </label>
           <label>
             生年月日
+            {{#each errors}}
+              {{#eq this.field "dateOfBirth"}}<br /><dev class="warning">{{this.defaultMessage}}</dev>{{/eq}}
+            {{/each}}
             <input type="text" name="dateOfBirth" value="{{userOrderForm.dateOfBirth}}"/></label>
           <label>
             住所
@@ -68,6 +73,9 @@
           {{/each}}
           <label class="caption">
             昨年の所得（万円）
+            {{#each errors}}
+              {{#eq this.field "income"}}<br /><dev class="warning">{{this.defaultMessage}}</dev>{{/eq}}
+            {{/each}}
             <input type="text" name="income" value="{{userOrderForm.income}}"/>
           </label>
         </fieldset>
@@ -85,6 +93,11 @@
           <div class="form-group">
             <label>
               「はい」 を選んだ方は内容をご記入下さい（全角）
+              {{#each errors}}
+              {{#eq this.field "untreatedMedicalHistoryValid"}}<br /><dev class="warning">{{this.defaultMessage}}</dev>{{/eq}}
+              {{#eq this.field "treatedMedicalHistoryValid"}}<br /><dev class="warning">{{this.defaultMessage}}</dev>{{/eq}}
+              {{#eq this.field "medicalHistory"}}<br /><dev class="warning">{{this.defaultMessage}}</dev>{{/eq}}
+              {{/each}}
               <input type="text" name="medicalHistory" value="{{userOrderForm.medicalHistory}}"/>
             </label>
           </div>

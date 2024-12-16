@@ -41,7 +41,7 @@ public record UserOrderForm(
     @NotBlank @Size(max = 60)
     String kanjiName,    // 氏名
 
-    @NotBlank @Pattern(regexp = "^[ァ-ヶー　]*$") @Size(max = 90)
+    @NotBlank @Pattern(regexp = "^[ァ-ヶー　]*$", message = "カタカナで入力してください") @Size(max = 90)
     String kanaName,    // シメイ（フリガナ）
 
     @NotBlank @YYYYMMDD()

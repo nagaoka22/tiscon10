@@ -3,7 +3,6 @@ package com.tiscon10.controller;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-import com.tiscon10.service.EstimateResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,6 +18,7 @@ import com.tiscon10.code.MarriedType;
 import com.tiscon10.code.TreatedType;
 import com.tiscon10.domain.InsuranceOrder;
 import com.tiscon10.form.UserOrderForm;
+import com.tiscon10.service.EstimateResult;
 import com.tiscon10.service.EstimateService;
 
 /**
@@ -75,7 +75,31 @@ public class EstimateController {
      * @return 遷移先画面ファイル名（確認画面）
      */
     @PostMapping("confirm")
-    String confirm(@ModelAttribute UserOrderForm userOrderForm, Model model) {
+    String confirm(@ModelAttribute @Validated UserOrderForm userOrderForm, BindingResult result, Model model) {
+
+        if (result.hasErrors()) {
+            // 入力エラーがある場合は、確認画面に遷移する。
+            model.addAttribute("errors", result.getAllErrors());
+
+            // 全ての保険種別をプルダウン表示用に用意
+            model.addAttribute("insurances", estimateService.getInsurances());
+            // 配偶者有無、ご職業、病歴有無の全選択肢をラジオボタン表示用に用意
+            model.addAttribute("marriedTypes", MarriedType.values());
+            model.addAttribute("jobTypes", JobType.values());
+            model.addAttribute("treatedTypes", TreatedType.values());
+            return "input";  // 確認画面表示を指示
+        }
+    
+        // 誕生日
+        LocalDate dateOfBirth = LocalDate.parse(userOrderForm.dateOfBirth(), DateTimeFormatter.ofPattern("yyyy/MM/dd"));
+        // 年齢が範囲内であるか確認する
+        if (!estimateService.isAgeValid(dateOfBirth)) {
+            // エラーの場合、Formの生年月日の項目にFieldErrorを追加
+            result.addError(new FieldError("userOrderForm", "dateOfBirth",
+                "年齢は20歳以上100歳以下である必要があります"));
+            model.addAttribute("errors", result.getAllErrors());
+            return "input";  // 確認画面表示を指示
+        }
 
         // 選択された保険種別に対応する保険名を取得
         String insuranceName = fetchInsuranceName(userOrderForm.insuranceType());
